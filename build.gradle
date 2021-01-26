@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.21'
+    id 'application'
+    id 'org.beryx.jlink' version '2.23.2'
+}
+
+group 'com.sergeysav'
+version '1.0-SNAPSHOT'
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+//    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "14"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "14"
+}
+
+compileKotlin.destinationDir = compileJava.destinationDir
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath
+        ]
+    }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
+}
+
+application {
+    mainClass = "com.sergeysav.jlinktest.MainKt"
+    mainModule = "com.sergeysav.jlinktest"
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+jlink {
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    launcher{
+        name = 'jlinktest'
+    }
+    mergedModule {
+    }
+}
